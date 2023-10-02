@@ -103,15 +103,29 @@ def main():
     # Check if source_folder path exists
     if not os.path.exists(args.source):
         log = open(args.logger, "a")    
-        log.write(f"{start_time}: Source folder path '{args.source}' does not exist.\n")
-        print(f"{start_time}: Source folder path '{args.source}' does not exist.")
+        log.write(f"{start_time}: Source folder path '{args.source}' does not exist\n")
+        print(f"{start_time}: Source folder path '{args.source}' does not exist")
+        return
+    
+    # Check if source_folder and replica_folder have different paths
+    if os.path.abspath(args.source) == os.path.abspath(args.replica):
+        log = open(args.logger, "a") 
+        log.write(f"{start_time}: Source folder and replica folder must have different paths\n")
+        print(f"{start_time}: Source folder and replica folder must have different paths")
+        return
+    
+    # Check if source_folder and log_file are not inside replica_folder
+    if os.path.commonpath([os.path.abspath(args.source), os.path.abspath(args.logger)]) == os.path.abspath(args.replica):
+        log = open(args.logger, "a") 
+        log.write(f"{start_time}: Source folder and log file must not be inside the replica folder\n")
+        print(f"{start_time}: Source folder and log file must not be inside the replica folder")
         return
 
     # Check if period is non-negative
     if args.period < 0:
         log = open(args.logger, "a")    
-        log.write(f"{start_time}: Synchronization interval must be a non-negative integer.\n")
-        print(f"{start_time}: Synchronization interval must be a non-negative integer.")
+        log.write(f"{start_time}: Synchronization interval must be a non-negative integer\n")
+        print(f"{start_time}: Synchronization interval must be a non-negative integer")
         return
     
     synchronizer(args.source, args.replica, args.period, args.logger)
