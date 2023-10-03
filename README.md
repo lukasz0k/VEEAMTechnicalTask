@@ -33,4 +33,8 @@ This function creates lists of sub folders in the source and replica folders and
 
 The problem in implementing this solution was the correct navigation of subfolder paths inside the main folders.
 After solving this problem, I decided to move the while loop to the main function.   
-This allowed for better management of logger entries and better supervision of the operation of two functions.
+This allowed for better management of logger entries and better supervision of the operation of two functions.  
+
+Create a loop in synchronizer and synchronize_subfolders to update files in replica folder/subfolders.  
+To the newest version. Those loop take a time by os.path.getmtime and compare it.  
+If the source file have higher value, update file in replica.
