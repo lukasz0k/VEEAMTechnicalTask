@@ -16,4 +16,12 @@ The first version of the code was sent on 01.10
 
 The changes which have been made in main function, they are checking and validating inputs data path.  
 Just now, the function also check whether the source folder and logger file are not in the replica folder.  
-Also, function check that paths to source folder and replica folder are not the same.
+Also, function check that paths to source folder and replica folder are not the same.  
+
+This function creates lists of sub folders in the source and replica folders and then subjects  
+them to the same processes as the main folders.  
+
+
+The problem in implementing this solution was the correct navigation of subfolder paths inside the main folders.
+After solving this problem, I decided to move the while loop to the main function.   
+This allowed for better management of logger entries and better supervision of the operation of two functions.
