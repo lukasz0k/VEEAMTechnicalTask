@@ -36,6 +36,7 @@ def synchronizer(source, replica, logger):
             shutil.copy2(source_path, destination_path)
             log.write(f"{current_time}: Copied file: {source_path} -> {destination_path}\n")
             print(f"{current_time}: Copied file: {source_path} -> {destination_path}")
+            
     
     # Section to remove subfolders and files from replica
     for name in dist_compare.right_only:
@@ -48,6 +49,16 @@ def synchronizer(source, replica, logger):
             os.remove(replica_path)
             log.write(f"{current_time}: Removed file: {replica_path}\n")
             print(f"{current_time}: Removed file: {replica_path}")
+
+    # Update files replica
+    source_files = os.listdir(source)
+    for name in source_files:
+        source_path = os.path.join(source, name)
+        destination_path = os.path.join(replica, name)
+        if not os.path.isdir(source_path) and os.path.getmtime(source_path) > os.path.getmtime(destination_path):
+            shutil.copy2(source_path, destination_path)
+            log.write(f"{current_time}: Update file: {source_path} -> {destination_path}\n")
+            print(f"{current_time}: Update file: {source_path} -> {destination_path}")
 
 def synchronize_subfolders(source, replica, logger):
     log = open(logger, "a") 
@@ -96,6 +107,16 @@ def synchronize_subfolders(source, replica, logger):
                 os.remove(path)
                 log.write(f"{current_time}: Removed file: {path}\n")
                 print(f"{current_time}: Removed file: {path}")
+
+        # Update files in subfolders
+        source_files = os.listdir(source_folder)
+        for name in source_files:
+            source_path = os.path.join(source, name)
+            destination_path = os.path.join(replica, name)
+            if not os.path.isdir(source_path) and os.path.getmtime(source_path) > os.path.getmtime(destination_path):
+                shutil.copy2(source_path, destination_path)
+                log.write(f"{current_time}: Update file: {source_path} -> {destination_path}\n")
+                print(f"{current_time}: Update file: {source_path} -> {destination_path}")
                  
 # Section to write inputs by user
 def main():
