@@ -4,6 +4,7 @@ import shutil # library to managmant files inside folders
 import time # library to get time to log file
 import argparse # library to add coments in cmd (path, period etc)
 import atexit # give a message when shut down process
+import traceback
 
 ## Please implement a program that synchronizes two folders: source and 
 ## replica. The program should maintain a full, identical copy of source 
@@ -36,6 +37,7 @@ def synchronizer(source, replica, logger):
             shutil.copy2(source_path, destination_path)
             log.write(f"{current_time}: Copied file: {source_path} -> {destination_path}\n")
             print(f"{current_time}: Copied file: {source_path} -> {destination_path}")
+            
     
     # Section to remove subfolders and files from replica
     for name in dist_compare.right_only:
@@ -48,6 +50,16 @@ def synchronizer(source, replica, logger):
             os.remove(replica_path)
             log.write(f"{current_time}: Removed file: {replica_path}\n")
             print(f"{current_time}: Removed file: {replica_path}")
+
+    # Update files replica
+    source_files = os.listdir(source)
+    for name in source_files:
+        source_path = os.path.join(source, name)
+        destination_path = os.path.join(replica, name)
+        if not os.path.isdir(source_path) and os.path.getmtime(source_path) > os.path.getmtime(destination_path):
+            shutil.copy2(source_path, destination_path)
+            log.write(f"{current_time}: Update file: {source_path} -> {destination_path}\n")
+            print(f"{current_time}: Update file: {source_path} -> {destination_path}")
 
 def synchronize_subfolders(source, replica, logger):
     log = open(logger, "a") 
@@ -73,17 +85,17 @@ def synchronize_subfolders(source, replica, logger):
 
         # Section to create and copy file from subfolders in source to replica
         for name in dcmp.left_only:
-            src_path = os.path.join(source_folder, name)
+            source_path = os.path.join(source_folder, name)
             dest_path = os.path.join(replica_folder, name)
 
-            if os.path.isdir(src_path):
+            if os.path.isdir(source_path):
                 os.makedirs(dest_path)
                 log.write(f"{current_time}: Created folder: {dest_path}\n")
                 print(f"{current_time}: Created folder: {dest_path}")
             else:
-                shutil.copy2(src_path, dest_path)
-                log.write(f"{current_time}: Copied file: {src_path} -> {dest_path}\n")
-                print(f"{current_time}: Copied file: {src_path} -> {dest_path}")
+                shutil.copy2(source_path, dest_path)
+                log.write(f"{current_time}: Copied file: {source_path} -> {dest_path}\n")
+                print(f"{current_time}: Copied file: {source_path} -> {dest_path}")
 
         # Section to remove files and subfolders from replica
         for name in dcmp.right_only:
@@ -96,6 +108,16 @@ def synchronize_subfolders(source, replica, logger):
                 os.remove(path)
                 log.write(f"{current_time}: Removed file: {path}\n")
                 print(f"{current_time}: Removed file: {path}")
+
+        # Update files in subfolders
+        source_files = os.listdir(source_folder)
+        for name in source_files:
+            source_path = os.path.join(source_folder, name)
+            destination_path = os.path.join(replica_folder, name)
+            if not os.path.isdir(source_path) and os.path.getmtime(source_path) > os.path.getmtime(destination_path):
+                shutil.copy2(source_path, destination_path)
+                log.write(f"{current_time}: Update file: {source_path} -> {destination_path}\n")
+                print(f"{current_time}: Update file: {source_path} -> {destination_path}")
                  
 # Section to write inputs by user
 def main():
@@ -163,6 +185,7 @@ def main():
         except Exception as e:
                 log.write(f"{current_time}: Error during synchronization: {str(e)}\n")
                 print(f"{current_time}: Error during synchronization: {str(e)}")
+                traceback.print_exc()
 
         time.sleep(args.period)
 
