@@ -4,7 +4,6 @@ import shutil # library to managmant files inside folders
 import time # library to get time to log file
 import argparse # library to add coments in cmd (path, period etc)
 import atexit # give a message when shut down process
-import traceback
 
 ## Please implement a program that synchronizes two folders: source and 
 ## replica. The program should maintain a full, identical copy of source 
@@ -164,7 +163,6 @@ def main():
         except Exception as e:
                 log.write(f"{current_time}: Error during synchronization: {str(e)}\n")
                 print(f"{current_time}: Error during synchronization: {str(e)}")
-                traceback.print_exc()
 
         time.sleep(args.period)
 
